@@ -1,48 +1,52 @@
-import React , { useState }from 'react';
-import _ from 'lodash';
+import React, { useState } from 'react';
+import _  from 'lodash';
 import CharacterCard from './CharacterCard';
 
-const prepareStateFromWord = given_word =>{
-    let word  = given_word.toUpperCase()
-    let chars = _.shuffle(Array.from(word))
+const prepareStateFromWord = (given_word) => {
+    let number = given_word.toUpperCase()
+    let chars = _.shuffle(Array.from(number))
     return {
-        word,
+        number,
         chars,
         attempt: 1,
-        guess: '',
+        guess: '',  
         completed: false
-    }
+    }       
 }
 
-export default function WordCard(props){
-
-    const [state, setState] = useState(prepareStateFromWord(props.value))
-
-    const activationhandler = c => { 
+export default function Wordcard(prons){
+   
+    const [state, setState] = useState(prepareStateFromWord(prons.value))
+    const activationHandler = c => 
+    { 
         console.log(`${c} has been activated.`) 
+        
+        let guess = state.guess+c;
+        setState({...state,guess})
 
-        let guess = state.guess + c
-        setState({...state, guess})
-
-        if(guess.length == state.word.length){
-            if(guess == state.word){
-                console.log('yeah!')
-                setState({...state, completed: true})
+        //choose only 2 even numbers
+       if(guess.length == 2){
+            if(guess%2==0){
+                alert("You Win!!");
+                setState({...state, guess: '', completed: true});
+                window.location.reload(false);
             }else{
-                console.log('reset, next attempt')
-                setState({...state, guess: '', attempt: state.attempt + 1}) 
-            }
-        }
-        //console.log(guess);
+                alert("You lose!!");
+                setState({...state, guess: '', attempt: state.attempt + 1})
+                }
+            }  
     }
-
-    return (
+   
+    return(
+    <div>
         <div>
-            {
-                state.chars.map((c, i) => 
-                    <CharacterCard value={c} key={i} activationhandler={activationhandler} attempt={state.attempt}/> //props
-                )
-            }
+            Your Ans:{state.guess}
         </div>
+       {
+          state.chars.map((c,i)=>
+         <CharacterCard value={c} key={i} activationHandler={activationHandler} attempt={state.attempt}/>
+         )
+      }
+    </div>
     )
 }
